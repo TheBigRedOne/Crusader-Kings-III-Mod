@@ -1,0 +1,201 @@
+﻿rsc_enforce_caps_batch = {
+	scope = character
+
+	saved_scopes = {
+		rsc_current_knight_effectiveness
+	}
+
+	effect = {
+		# 200% is the default for old and new saves.
+		if = {
+			limit = {
+				NOT = { exists = global_var:rsc_knight_cap_target }
+			}
+			set_global_variable = {
+				name = rsc_knight_cap_target
+				value = 2
+			}
+		}
+
+		# Knight effectiveness is the first item in this batch. Future capped
+		# values should add their read/calculation/write block here, rather than
+		# creating another polling animation.
+		#
+		# A modifier without its matching magnitude cannot be reconstructed
+		# safely. Remove that inconsistent state and let the next pulse perform
+		# a clean calculation from the unmodified value.
+		if = {
+			limit = {
+				has_character_modifier = rsc_knight_cap_correction_modifier
+				NOT = {
+					exists = var:rsc_knight_cap_excess
+				}
+			}
+
+			remove_character_modifier = rsc_knight_cap_correction_modifier
+		}
+		else = {
+			# A magnitude without the modifier is stale state, not an active
+			# correction. Discard it before calculating the natural value.
+			if = {
+				limit = {
+					exists = var:rsc_knight_cap_excess
+					NOT = {
+						has_character_modifier = rsc_knight_cap_correction_modifier
+					}
+				}
+
+				remove_variable = rsc_knight_cap_excess
+			}
+
+			set_local_variable = {
+				name = rsc_local_knight_raw
+				value = scope:rsc_current_knight_effectiveness
+			}
+
+			# The getter includes our existing negative correction. Add its
+			# magnitude back only when both halves of the correction exist.
+			if = {
+				limit = {
+					exists = var:rsc_knight_cap_excess
+					has_character_modifier = rsc_knight_cap_correction_modifier
+				}
+
+				change_local_variable = {
+					name = rsc_local_knight_raw
+					add = var:rsc_knight_cap_excess
+				}
+			}
+
+			if = {
+				limit = {
+					global_var:rsc_knight_cap_target <= 0
+				}
+
+				# Disabled: remove our correction once, then remain read-only.
+				if = {
+					limit = {
+						OR = {
+							has_character_modifier = rsc_knight_cap_correction_modifier
+							exists = var:rsc_knight_cap_excess
+						}
+					}
+
+					remove_character_modifier = rsc_knight_cap_correction_modifier
+					remove_variable = rsc_knight_cap_excess
+				}
+			}
+			else = {
+				set_local_variable = {
+					name = rsc_local_knight_desired
+					value = local_var:rsc_local_knight_raw
+				}
+				change_local_variable = {
+					name = rsc_local_knight_desired
+					subtract = global_var:rsc_knight_cap_target
+				}
+
+				if = {
+					limit = {
+						local_var:rsc_local_knight_desired > 0.0001
+					}
+
+					# Tolerance bounds prevent tiny floating-point differences
+					# from causing needless modifier rewrites.
+					set_local_variable = {
+						name = rsc_local_knight_desired_lower
+						value = local_var:rsc_local_knight_desired
+					}
+					change_local_variable = {
+						name = rsc_local_knight_desired_lower
+						subtract = 0.001
+					}
+					set_local_variable = {
+						name = rsc_local_knight_desired_upper
+						value = local_var:rsc_local_knight_desired
+					}
+					change_local_variable = {
+						name = rsc_local_knight_desired_upper
+						add = 0.001
+					}
+					set_local_variable = {
+						name = rsc_local_knight_target_lower
+						value = global_var:rsc_knight_cap_target
+					}
+					change_local_variable = {
+						name = rsc_local_knight_target_lower
+						subtract = 0.001
+					}
+					set_local_variable = {
+						name = rsc_local_knight_target_upper
+						value = global_var:rsc_knight_cap_target
+					}
+					change_local_variable = {
+						name = rsc_local_knight_target_upper
+						add = 0.001
+					}
+
+					# Missing state means the previous write did not stick (or
+					# this is the first capped pulse), so write it now.
+					if = {
+						limit = {
+							OR = {
+								NOT = {
+									has_character_modifier = rsc_knight_cap_correction_modifier
+								}
+								NOT = {
+									exists = var:rsc_knight_cap_excess
+								}
+							}
+						}
+
+						remove_character_modifier = rsc_knight_cap_correction_modifier
+						set_variable = {
+							name = rsc_knight_cap_excess
+							value = local_var:rsc_local_knight_desired
+						}
+						add_character_modifier = {
+							modifier = rsc_knight_cap_correction_modifier
+						}
+					}
+					else_if = {
+						limit = {
+							# Verify both the requested correction and the actual
+							# final value. This retries a failed/partial write.
+							OR = {
+								var:rsc_knight_cap_excess < local_var:rsc_local_knight_desired_lower
+								var:rsc_knight_cap_excess > local_var:rsc_local_knight_desired_upper
+								scope:rsc_current_knight_effectiveness < local_var:rsc_local_knight_target_lower
+								scope:rsc_current_knight_effectiveness > local_var:rsc_local_knight_target_upper
+							}
+						}
+
+						remove_character_modifier = rsc_knight_cap_correction_modifier
+						set_variable = {
+							name = rsc_knight_cap_excess
+							value = local_var:rsc_local_knight_desired
+						}
+						add_character_modifier = {
+							modifier = rsc_knight_cap_correction_modifier
+						}
+					}
+				}
+				else = {
+					# The natural value is at or below the cap. Remove an old
+					# negative correction if one exists; otherwise do nothing.
+					if = {
+						limit = {
+							OR = {
+								has_character_modifier = rsc_knight_cap_correction_modifier
+								exists = var:rsc_knight_cap_excess
+							}
+						}
+
+						remove_character_modifier = rsc_knight_cap_correction_modifier
+						remove_variable = rsc_knight_cap_excess
+					}
+				}
+			}
+		}
+	}
+}

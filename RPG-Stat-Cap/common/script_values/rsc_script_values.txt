@@ -1,0 +1,8 @@
+﻿rsc_knight_cap_excess_value = {
+	value = 0
+
+	if = {
+		limit = { exists = var:rsc_knight_cap_excess }
+		value = var:rsc_knight_cap_excess
+	}
+}

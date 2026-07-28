@@ -1,0 +1,165 @@
+﻿rsc_configure_caps_decision = {
+	ai_check_interval = 0
+	sort_order = 5
+	decision_group_type = decisions
+
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_dynasty_house.dds"
+	}
+
+	is_shown = {
+		is_ai = no
+	}
+
+	is_valid = {
+		always = yes
+	}
+
+	widget = {
+		gui = "decision_view_widget_option_list_generic"
+		controller = decision_option_list_controller
+		decision_to_second_step_button = "rsc_configure_caps_next"
+		show_from_start = yes
+
+		item = {
+			value = rsc_knight_cap_200
+			is_valid = { always = yes }
+			current_description = rsc_knight_cap_200_desc
+			localization = rsc_knight_cap_200
+			icon = "gfx/interface/icons/flat_icons/knight_effectiveness.dds"
+			ai_chance = {
+				value = 0
+				if = {
+					limit = {
+						OR = {
+							NOT = { exists = global_var:rsc_knight_cap_target }
+							global_var:rsc_knight_cap_target = 2
+						}
+					}
+					add = 100
+				}
+			}
+		}
+
+		item = {
+			value = rsc_knight_cap_150
+			is_valid = { always = yes }
+			current_description = rsc_knight_cap_150_desc
+			localization = rsc_knight_cap_150
+			icon = "gfx/interface/icons/flat_icons/knight_effectiveness.dds"
+			ai_chance = {
+				value = 0
+				if = {
+					limit = { global_var:rsc_knight_cap_target = 1.5 }
+					add = 100
+				}
+			}
+		}
+
+		item = {
+			value = rsc_knight_cap_250
+			is_valid = { always = yes }
+			current_description = rsc_knight_cap_250_desc
+			localization = rsc_knight_cap_250
+			icon = "gfx/interface/icons/flat_icons/knight_effectiveness.dds"
+			ai_chance = {
+				value = 0
+				if = {
+					limit = { global_var:rsc_knight_cap_target = 2.5 }
+					add = 100
+				}
+			}
+		}
+
+		item = {
+			value = rsc_knight_cap_300
+			is_valid = { always = yes }
+			current_description = rsc_knight_cap_300_desc
+			localization = rsc_knight_cap_300
+			icon = "gfx/interface/icons/flat_icons/knight_effectiveness.dds"
+			ai_chance = {
+				value = 0
+				if = {
+					limit = { global_var:rsc_knight_cap_target = 3 }
+					add = 100
+				}
+			}
+		}
+
+		item = {
+			value = rsc_knight_cap_400
+			is_valid = { always = yes }
+			current_description = rsc_knight_cap_400_desc
+			localization = rsc_knight_cap_400
+			icon = "gfx/interface/icons/flat_icons/knight_effectiveness.dds"
+			ai_chance = {
+				value = 0
+				if = {
+					limit = { global_var:rsc_knight_cap_target = 4 }
+					add = 100
+				}
+			}
+		}
+
+		item = {
+			value = rsc_knight_cap_disabled
+			is_valid = { always = yes }
+			current_description = rsc_knight_cap_disabled_desc
+			localization = rsc_knight_cap_disabled
+			icon = "gfx/interface/icons/flat_icons/knight_effectiveness.dds"
+			ai_chance = {
+				value = 0
+				if = {
+					limit = { global_var:rsc_knight_cap_target = 0 }
+					add = 100
+				}
+			}
+		}
+	}
+
+	effect = {
+		if = {
+			limit = { scope:rsc_knight_cap_150 = yes }
+			set_global_variable = {
+				name = rsc_knight_cap_target
+				value = 1.5
+			}
+		}
+		else_if = {
+			limit = { scope:rsc_knight_cap_250 = yes }
+			set_global_variable = {
+				name = rsc_knight_cap_target
+				value = 2.5
+			}
+		}
+		else_if = {
+			limit = { scope:rsc_knight_cap_300 = yes }
+			set_global_variable = {
+				name = rsc_knight_cap_target
+				value = 3
+			}
+		}
+		else_if = {
+			limit = { scope:rsc_knight_cap_400 = yes }
+			set_global_variable = {
+				name = rsc_knight_cap_target
+				value = 4
+			}
+		}
+		else_if = {
+			limit = { scope:rsc_knight_cap_disabled = yes }
+			set_global_variable = {
+				name = rsc_knight_cap_target
+				value = 0
+			}
+		}
+		else = {
+			set_global_variable = {
+				name = rsc_knight_cap_target
+				value = 2
+			}
+		}
+	}
+
+	confirm_text = rsc_configure_caps_confirm
+}
