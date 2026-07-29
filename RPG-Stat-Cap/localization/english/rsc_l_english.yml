@@ -1,0 +1,21 @@
+﻿l_english:
+ rsc_configure_caps_decision: "Configure RPG Stat Caps"
+ rsc_configure_caps_decision_desc: "Choose a hard ceiling for the final Knight Effectiveness of the current player character. Bonuses may still stack normally, but any amount above the selected ceiling is automatically offset."
+ rsc_configure_caps_decision_tooltip: "Configure the player-only Knight Effectiveness cap"
+ rsc_configure_caps_next: "Choose a Cap"
+ rsc_configure_caps_confirm: "Apply Setting"
+
+ rsc_knight_cap_150: "Knight Effectiveness: 150%"
+ rsc_knight_cap_150_desc: "Limit the player's final Knight Effectiveness to 150%."
+ rsc_knight_cap_200: "Knight Effectiveness: 200% (Recommended)"
+ rsc_knight_cap_200_desc: "Limit the player's final Knight Effectiveness to 200%. This is the default."
+ rsc_knight_cap_250: "Knight Effectiveness: 250%"
+ rsc_knight_cap_250_desc: "Limit the player's final Knight Effectiveness to 250%."
+ rsc_knight_cap_300: "Knight Effectiveness: 300%"
+ rsc_knight_cap_300_desc: "Limit the player's final Knight Effectiveness to 300%."
+ rsc_knight_cap_400: "Knight Effectiveness: 400%"
+ rsc_knight_cap_400_desc: "Limit the player's final Knight Effectiveness to 400%."
+ rsc_knight_cap_disabled: "Knight Effectiveness: No Cap"
+ rsc_knight_cap_disabled_desc: "Disable the Knight Effectiveness cap and remove its correction."
+
+ rsc_knight_cap_correction_modifier: "RPG Stat Cap: Knight Effectiveness"

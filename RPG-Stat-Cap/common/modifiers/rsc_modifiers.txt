@@ -1,0 +1,9 @@
+﻿rsc_knight_cap_correction_modifier = {
+	icon = prowess_negative
+	knight_effectiveness_mult = -1
+
+	scale = {
+		value = rsc_knight_cap_excess_value
+		display_mode = scaled
+	}
+}
